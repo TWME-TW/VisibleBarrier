@@ -1,0 +1,32 @@
+name: VisibleBarrier
+version: '${project.version}'
+main: dev.twme.visiblebarrier.VisibleBarrierPlugin
+api-version: '1.20'
+folia-supported: true
+authors: [ TWME-TW ]
+depend:
+  - packetevents
+
+commands:
+  visiblebarrier:
+    description: Toggle packet-only overlays for invisible mapmaking blocks
+    usage: /visiblebarrier <toggle|settings|show|reload|give|menu>
+    aliases: [vb, visiblebarriers]
+    permission: visiblebarrier.use
+
+permissions:
+  visiblebarrier.use:
+    description: Allow using VisibleBarrier commands and overlays
+    default: true
+  visiblebarrier.settings:
+    description: Allow changing personal VisibleBarrier settings
+    default: true
+  visiblebarrier.menu:
+    description: Allow opening the VisibleBarrier menu
+    default: true
+  visiblebarrier.give:
+    description: Allow receiving technical mapmaking blocks
+    default: op
+  visiblebarrier.reload:
+    description: Allow reloading VisibleBarrier configuration
+    default: op

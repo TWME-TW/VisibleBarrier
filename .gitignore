@@ -1,0 +1,6 @@
+target/
+*.iml
+.idea/
+.vscode/
+run/
+plugins/VisibleBarrier/players.yml
