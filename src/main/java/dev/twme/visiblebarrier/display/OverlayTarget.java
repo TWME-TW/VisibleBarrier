@@ -10,5 +10,7 @@ public record OverlayTarget(
         Material iconMaterial,
         BlockData markerBlockData,
         String label,
+        boolean showMarker,
+        boolean showLabel,
         int glowColor) {
 }

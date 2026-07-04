@@ -39,7 +39,6 @@ public final class PluginSettings {
                 plugin.getConfig().getBoolean("defaults.bubble-columns", true),
                 plugin.getConfig().getBoolean("defaults.visible-air", false),
                 plugin.getConfig().getBoolean("defaults.send-feedback", true),
-                plugin.getConfig().getBoolean("defaults.hide-particles", true),
                 plugin.getConfig().getBoolean("defaults.solid-lights", false));
     }
 
@@ -85,6 +84,6 @@ public final class PluginSettings {
 
     public record Defaults(boolean enabled, boolean everything, boolean barriers, boolean lights,
                            boolean structureVoids, boolean bubbleColumns, boolean visibleAir,
-                           boolean sendFeedback, boolean hideParticles, boolean solidLights) {
+                           boolean sendFeedback, boolean solidLights) {
     }
 }

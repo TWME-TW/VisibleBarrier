@@ -66,7 +66,7 @@ public final class BlockScanner {
             if (block.getBlockData() instanceof Levelled levelled) {
                 label = "Light " + levelled.getLevel();
             }
-            return target(block, Material.LIGHT, Material.YELLOW_STAINED_GLASS, label, 0xFFFF55);
+            return target(block, Material.LIGHT, Material.YELLOW_STAINED_GLASS, label, settings.isSolidLights(), pluginSettings.showLightLevels(), 0xFFFF55);
         }
         if (material == Material.STRUCTURE_VOID && (everything || settings.isStructureVoids())) {
             return target(block, Material.STRUCTURE_VOID, Material.PURPLE_STAINED_GLASS, "Structure Void", 0xAA55FF);
@@ -88,8 +88,12 @@ public final class BlockScanner {
     }
 
     private OverlayTarget target(Block block, Material iconMaterial, Material markerMaterial, String label, int glowColor) {
+        return target(block, iconMaterial, markerMaterial, label, true, true, glowColor);
+    }
+
+    private OverlayTarget target(Block block, Material iconMaterial, Material markerMaterial, String label, boolean showMarker, boolean showLabel, int glowColor) {
         BlockData markerBlockData = markerMaterial.createBlockData();
-        return new OverlayTarget(BlockKey.of(block), block.getLocation(), safeIcon(iconMaterial), markerBlockData, label, glowColor);
+        return new OverlayTarget(BlockKey.of(block), block.getLocation(), safeIcon(iconMaterial), markerBlockData, label, showMarker, showLabel, glowColor);
     }
 
     private Material safeIcon(Material material) {

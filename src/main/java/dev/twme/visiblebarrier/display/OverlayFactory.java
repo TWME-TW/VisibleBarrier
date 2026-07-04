@@ -31,9 +31,11 @@ public final class OverlayFactory {
 
     public OverlayEntry create(OverlayTarget target, java.util.UUID viewerId) {
         List<WrapperEntity> entities = new ArrayList<>();
-        entities.add(createBlockMarker(target, viewerId));
+        if (target.showMarker()) {
+            entities.add(createBlockMarker(target, viewerId));
+        }
         entities.add(createItemIcon(target, viewerId));
-        if (pluginSettings.showLabels()) {
+        if (pluginSettings.showLabels() && target.showLabel()) {
             entities.add(createLabel(target, viewerId));
         }
         return new OverlayEntry(entities);

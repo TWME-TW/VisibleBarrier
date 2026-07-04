@@ -13,7 +13,6 @@ defaults:
   bubble-columns: true
   visible-air: false
   send-feedback: true
-  hide-particles: true
   solid-lights: false
 
 display:

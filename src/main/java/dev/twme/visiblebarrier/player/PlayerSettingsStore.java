@@ -49,7 +49,6 @@ public final class PlayerSettingsStore {
         data.set(path + ".bubble-columns", playerSettings.isBubbleColumns());
         data.set(path + ".visible-air", playerSettings.isVisibleAir());
         data.set(path + ".send-feedback", playerSettings.isSendFeedback());
-        data.set(path + ".hide-particles", playerSettings.isHideParticles());
         data.set(path + ".solid-lights", playerSettings.isSolidLights());
         saveFile();
     }
@@ -79,7 +78,6 @@ public final class PlayerSettingsStore {
         playerSettings.setBubbleColumns(section.getBoolean("bubble-columns", playerSettings.isBubbleColumns()));
         playerSettings.setVisibleAir(section.getBoolean("visible-air", playerSettings.isVisibleAir()));
         playerSettings.setSendFeedback(section.getBoolean("send-feedback", playerSettings.isSendFeedback()));
-        playerSettings.setHideParticles(section.getBoolean("hide-particles", playerSettings.isHideParticles()));
         playerSettings.setSolidLights(section.getBoolean("solid-lights", playerSettings.isSolidLights()));
         return playerSettings;
     }

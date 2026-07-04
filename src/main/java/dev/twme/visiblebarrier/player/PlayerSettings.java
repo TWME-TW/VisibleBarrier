@@ -11,7 +11,6 @@ public final class PlayerSettings {
     private boolean bubbleColumns;
     private boolean visibleAir;
     private boolean sendFeedback;
-    private boolean hideParticles;
     private boolean solidLights;
 
     public PlayerSettings(PluginSettings.Defaults defaults) {
@@ -23,7 +22,6 @@ public final class PlayerSettings {
         this.bubbleColumns = defaults.bubbleColumns();
         this.visibleAir = defaults.visibleAir();
         this.sendFeedback = defaults.sendFeedback();
-        this.hideParticles = defaults.hideParticles();
         this.solidLights = defaults.solidLights();
     }
 
@@ -89,14 +87,6 @@ public final class PlayerSettings {
 
     public void setSendFeedback(boolean sendFeedback) {
         this.sendFeedback = sendFeedback;
-    }
-
-    public boolean isHideParticles() {
-        return hideParticles;
-    }
-
-    public void setHideParticles(boolean hideParticles) {
-        this.hideParticles = hideParticles;
     }
 
     public boolean isSolidLights() {

@@ -25,7 +25,7 @@ import dev.twme.visiblebarrier.player.PlayerSettingsStore;
 public final class VisibleBarrierCommand implements TabExecutor {
     private static final List<String> ROOT = List.of("toggle", "settings", "show", "reload", "give", "place", "menu");
     private static final List<String> TOGGLES = List.of("all", "everything", "barriers", "lights", "structurevoids", "bubblecolumns", "air");
-    private static final List<String> SETTINGS = List.of("sendfeedback", "hideparticles", "solidlights", "visibleair");
+    private static final List<String> SETTINGS = List.of("sendfeedback", "solidlights", "visibleair");
     private static final List<String> BOOLEAN = List.of("on", "off", "true", "false");
     private static final List<String> ITEMS = List.of("barrier", "light", "structure_void", "bubble_column", "moving_piston", "air", "cave_air", "void_air", "end_portal", "end_gateway");
 
@@ -140,7 +140,7 @@ public final class VisibleBarrierCommand implements TabExecutor {
             return;
         }
         if (args.length < 2) {
-            send(player, "§7Usage: /visiblebarrier settings <sendfeedback|hideparticles|solidlights|visibleair> [on|off]");
+            send(player, "§7Usage: /visiblebarrier settings <sendfeedback|solidlights|visibleair> [on|off]");
             return;
         }
 
@@ -235,7 +235,7 @@ public final class VisibleBarrierCommand implements TabExecutor {
     private void sendHelp(CommandSender sender, String label) {
         send(sender, "§6VisibleBarrier");
         send(sender, "§7/" + label + " toggle [all|barriers|lights|structurevoids|bubblecolumns|air] [on|off]");
-        send(sender, "§7/" + label + " settings <sendfeedback|hideparticles|solidlights|visibleair> [on|off]");
+        send(sender, "§7/" + label + " settings <sendfeedback|solidlights|visibleair> [on|off]");
         send(sender, "§7/" + label + " show");
         send(sender, "§7/" + label + " menu");
         send(sender, "§7/" + label + " give <item> [variant] [player]");
@@ -261,7 +261,6 @@ public final class VisibleBarrierCommand implements TabExecutor {
     private SettingAccess settingAccess(String setting) {
         return switch (setting) {
             case "sendfeedback", "send_feedback" -> new SettingAccess(PlayerSettings::isSendFeedback, PlayerSettings::setSendFeedback);
-            case "hideparticles", "hide_particles" -> new SettingAccess(PlayerSettings::isHideParticles, PlayerSettings::setHideParticles);
             case "solidlights", "solid_lights" -> new SettingAccess(PlayerSettings::isSolidLights, PlayerSettings::setSolidLights);
             case "visibleair", "visible_air" -> new SettingAccess(PlayerSettings::isVisibleAir, PlayerSettings::setVisibleAir);
             default -> null;

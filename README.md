@@ -18,7 +18,7 @@ VisibleBarrier is a PaperMC plugin port of the Fabric `visiblebarriers-mod`. It 
 ## Commands
 
 - `/visiblebarrier toggle [all|everything|barriers|lights|structurevoids|bubblecolumns|air] [on|off]`
-- `/visiblebarrier settings <sendfeedback|hideparticles|solidlights|visibleair> [on|off]`
+- `/visiblebarrier settings <sendfeedback|solidlights|visibleair> [on|off]`
 - `/visiblebarrier show`
 - `/visiblebarrier menu`
 - `/visiblebarrier reload`
@@ -26,6 +26,12 @@ VisibleBarrier is a PaperMC plugin port of the Fabric `visiblebarriers-mod`. It 
 - `/visiblebarrier place <barrier|light|structure_void|bubble_column|moving_piston|air|cave_air|void_air|end_portal|end_gateway> [variant]`
 
 Aliases: `/vb`, `/visiblebarriers`.
+
+## Settings
+
+- `sendfeedback` stores the player preference for command feedback.
+- `visibleair` allows cave air and void air overlays when `everything` mode is enabled.
+- `solidlights` makes light block overlays include a small stained-glass block marker; when disabled, lights render as icon and label overlays only.
 
 ## Permissions
 
