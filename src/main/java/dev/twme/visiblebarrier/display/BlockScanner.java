@@ -59,17 +59,17 @@ public final class BlockScanner {
         boolean everything = settings.isEverything();
 
         if (material == Material.BARRIER && (everything || settings.isBarriers())) {
-            return target(block, Material.BARRIER, Material.RED_STAINED_GLASS, "Barrier", 0xFF5555);
+            return target(block, Material.BARRIER, null, Material.RED_STAINED_GLASS, "Barrier", true, true, false, 0xFF5555);
         }
         if (material == Material.LIGHT && (everything || settings.isLights())) {
             String label = "Light";
             if (block.getBlockData() instanceof Levelled levelled) {
                 label = "Light " + levelled.getLevel();
             }
-            return target(block, Material.LIGHT, Material.YELLOW_STAINED_GLASS, label, settings.isSolidLights(), pluginSettings.showLightLevels(), 0xFFFF55);
+            return target(block, Material.LIGHT, block.getBlockData(), Material.YELLOW_STAINED_GLASS, label, settings.isSolidLights(), pluginSettings.showLightLevels(), true, 0xFFFF55);
         }
         if (material == Material.STRUCTURE_VOID && (everything || settings.isStructureVoids())) {
-            return target(block, Material.STRUCTURE_VOID, Material.PURPLE_STAINED_GLASS, "Structure Void", 0xAA55FF);
+            return target(block, Material.STRUCTURE_VOID, null, Material.PURPLE_STAINED_GLASS, "Structure Void", true, true, false, 0xAA55FF);
         }
         if (material == Material.BUBBLE_COLUMN && (everything || settings.isBubbleColumns())) {
             String label = "Bubble Column";
@@ -88,12 +88,12 @@ public final class BlockScanner {
     }
 
     private OverlayTarget target(Block block, Material iconMaterial, Material markerMaterial, String label, int glowColor) {
-        return target(block, iconMaterial, markerMaterial, label, true, true, glowColor);
+        return target(block, iconMaterial, null, markerMaterial, label, true, true, true, glowColor);
     }
 
-    private OverlayTarget target(Block block, Material iconMaterial, Material markerMaterial, String label, boolean showMarker, boolean showLabel, int glowColor) {
+    private OverlayTarget target(Block block, Material iconMaterial, BlockData iconBlockData, Material markerMaterial, String label, boolean showMarker, boolean showLabel, boolean glowingMarker, int glowColor) {
         BlockData markerBlockData = markerMaterial.createBlockData();
-        return new OverlayTarget(BlockKey.of(block), block.getLocation(), safeIcon(iconMaterial), markerBlockData, label, showMarker, showLabel, glowColor);
+        return new OverlayTarget(BlockKey.of(block), block.getLocation(), safeIcon(iconMaterial), iconBlockData, markerBlockData, label, showMarker, showLabel, glowingMarker, glowColor);
     }
 
     private Material safeIcon(Material material) {

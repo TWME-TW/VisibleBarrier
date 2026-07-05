@@ -6,6 +6,8 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockDataMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.util.Vector3f;
@@ -46,11 +48,16 @@ public final class OverlayFactory {
         entity.spawn(SpigotConversionUtil.fromBukkitLocation(target.blockLocation()));
         if (entity.getEntityMeta() instanceof BlockDisplayMeta meta) {
             meta.setBlockState(SpigotConversionUtil.fromBukkitBlockData(target.markerBlockData()));
-            meta.setTranslation(new Vector3f(0.36f, 0.36f, 0.36f));
-            meta.setScale(new Vector3f(0.28f, 0.28f, 0.28f));
+            if (target.glowingMarker()) {
+                meta.setTranslation(new Vector3f(0.36f, 0.36f, 0.36f));
+                meta.setScale(new Vector3f(0.28f, 0.28f, 0.28f));
+            } else {
+                meta.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
+                meta.setScale(new Vector3f(1.0f, 1.0f, 1.0f));
+            }
             applyDisplayDefaults(meta, target.glowColor());
         }
-        entity.getEntityMeta().setGlowing(true);
+        entity.getEntityMeta().setGlowing(target.glowingMarker());
         entity.addViewer(viewerId);
         return entity;
     }
@@ -61,7 +68,7 @@ public final class OverlayFactory {
         entity.spawn(SpigotConversionUtil.fromBukkitLocation(location));
         if (entity.getEntityMeta() instanceof ItemDisplayMeta meta) {
             Material material = target.iconMaterial().isItem() ? target.iconMaterial() : Material.PAPER;
-            meta.setItem(SpigotConversionUtil.fromBukkitItemStack(new ItemStack(material)));
+            meta.setItem(SpigotConversionUtil.fromBukkitItemStack(createIconItem(material, target)));
             meta.setDisplayType(ItemDisplayMeta.DisplayType.FIXED);
             meta.setBillboardConstraints(AbstractDisplayMeta.BillboardConstraints.CENTER);
             meta.setScale(new Vector3f(pluginSettings.iconScale(), pluginSettings.iconScale(), pluginSettings.iconScale()));
@@ -69,6 +76,15 @@ public final class OverlayFactory {
         }
         entity.addViewer(viewerId);
         return entity;
+    }
+
+    private ItemStack createIconItem(Material material, OverlayTarget target) {
+        ItemStack itemStack = new ItemStack(material);
+        if (target.iconBlockData() != null && itemStack.getItemMeta() instanceof BlockDataMeta meta) {
+            meta.setBlockData(target.iconBlockData());
+            itemStack.setItemMeta((ItemMeta) meta);
+        }
+        return itemStack;
     }
 
     private WrapperEntity createLabel(OverlayTarget target, java.util.UUID viewerId) {
