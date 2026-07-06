@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -15,22 +14,19 @@ import org.jetbrains.annotations.Nullable;
 
 import dev.twme.visiblebarrier.VisibleBarrierPlugin;
 import dev.twme.visiblebarrier.display.OverlayManager;
-import dev.twme.visiblebarrier.item.TechnicalBlockService;
 import dev.twme.visiblebarrier.menu.VisibleBarrierMenu;
 import dev.twme.visiblebarrier.player.PlayerSettings;
 import dev.twme.visiblebarrier.player.PlayerSettingsStore;
 
 public final class VisibleBarrierCommand implements TabExecutor {
-    private static final List<String> ROOT = List.of("toggle", "show", "reload", "give", "menu");
+    private static final List<String> ROOT = List.of("toggle", "show", "reload", "menu");
     private static final List<String> TOGGLES = List.of("all", "everything", "barriers", "lights", "structurevoids", "bubblecolumns", "movingpistons", "air");
     private static final List<String> BOOLEAN = List.of("on", "off", "true", "false");
-    private static final List<String> ITEMS = List.of("barrier", "light", "structure_void", "bubble_column", "moving_piston", "air", "cave_air", "void_air");
 
     private final VisibleBarrierPlugin plugin;
     private final OverlayManager overlayManager;
     private final PlayerSettingsStore playerSettingsStore;
     private final VisibleBarrierMenu menu;
-    private final TechnicalBlockService technicalBlockService = new TechnicalBlockService();
 
     public VisibleBarrierCommand(VisibleBarrierPlugin plugin, OverlayManager overlayManager, PlayerSettingsStore playerSettingsStore, VisibleBarrierMenu menu) {
         this.plugin = plugin;
@@ -51,7 +47,6 @@ public final class VisibleBarrierCommand implements TabExecutor {
             case "toggle" -> handleToggle(sender, args);
             case "show" -> handleShow(sender);
             case "reload" -> handleReload(sender);
-            case "give" -> handleGive(sender, args);
             case "menu" -> handleMenu(sender);
             default -> sendHelp(sender, label);
         }
@@ -67,11 +62,6 @@ public final class VisibleBarrierCommand implements TabExecutor {
         if ("toggle".equals(subCommand)) {
             if (args.length == 2) return filter(TOGGLES, args[1]);
             if (args.length == 3) return filter(BOOLEAN, args[2]);
-        }
-        if ("give".equals(subCommand)) {
-            if (args.length == 2) return filter(ITEMS, args[1]);
-            if (args.length == 3) return filter(List.of("up", "down", "normal", "sticky", "15"), args[2]);
-            if (args.length == 4) return filter(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), args[3]);
         }
         return List.of();
     }
@@ -150,27 +140,6 @@ public final class VisibleBarrierCommand implements TabExecutor {
         send(sender, "§aVisibleBarrier configuration reloaded.");
     }
 
-    private void handleGive(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("visiblebarrier.give")) {
-            send(sender, "§cYou do not have permission to give VisibleBarrier blocks.");
-            return;
-        }
-        if (args.length < 2) {
-            send(sender, "§7Usage: /visiblebarrier give <item> [variant] [player]");
-            return;
-        }
-        Player target = args.length >= 4 ? Bukkit.getPlayerExact(args[3]) : requirePlayer(sender);
-        if (target == null) {
-            send(sender, "§cPlayer not found.");
-            return;
-        }
-        if (!technicalBlockService.give(target, args[1], args.length >= 3 ? args[2] : "")) {
-            send(sender, "§cCannot give that block as an item.");
-            return;
-        }
-        send(sender, "§aGave " + args[1] + " to " + target.getName() + ".");
-    }
-
     private void handleMenu(CommandSender sender) {
         Player player = requirePlayer(sender);
         if (player == null) return;
@@ -187,7 +156,6 @@ public final class VisibleBarrierCommand implements TabExecutor {
         send(sender, "§8  air controls cave_air and void_air overlays; these require everything mode.");
         send(sender, "§7/" + label + " show");
         send(sender, "§7/" + label + " menu");
-        send(sender, "§7/" + label + " give <item> [variant] [player]");
     }
 
     private Player requirePlayer(CommandSender sender) {

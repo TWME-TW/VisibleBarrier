@@ -9,7 +9,15 @@
   <packaging>jar</packaging>
 
   <name>VisibleBarrier</name>
-  <description>PaperMC port of Visible Barriers using packet-only display overlays.</description>
+  <description>PaperMC plugin for packet-only technical block visibility overlays.</description>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/license/mit</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
   <properties>
     <java.version>21</java.version>
