@@ -10,16 +10,13 @@ depend:
 commands:
   visiblebarrier:
     description: Toggle packet-only overlays for invisible mapmaking blocks
-    usage: /visiblebarrier <toggle|settings|show|reload|give|menu>
+    usage: /visiblebarrier <toggle|show|reload|give|menu>
     aliases: [vb, visiblebarriers]
     permission: visiblebarrier.use
 
 permissions:
   visiblebarrier.use:
     description: Allow using VisibleBarrier commands and overlays
-    default: true
-  visiblebarrier.settings:
-    description: Allow changing personal VisibleBarrier settings
     default: true
   visiblebarrier.menu:
     description: Allow opening the VisibleBarrier menu

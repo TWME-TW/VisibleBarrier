@@ -10,10 +10,10 @@ defaults:
   barriers: true
   lights: true
   structure-voids: true
-  bubble-columns: true
+  bubble-columns: false
+  moving-pistons: true
   visible-air: false
-  send-feedback: true
-  solid-lights: false
+  labels: false
 
 display:
   view-range: 48.0

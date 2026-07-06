@@ -13,6 +13,5 @@ public record OverlayTarget(
         String label,
         boolean showMarker,
         boolean showLabel,
-        boolean glowingMarker,
-        int glowColor) {
+        boolean fullSizeMarker) {
 }

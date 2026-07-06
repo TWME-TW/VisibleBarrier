@@ -9,36 +9,33 @@ VisibleBarrier is a PaperMC plugin port of the Fabric `visiblebarriers-mod`. It 
 
 ## Features
 
-- Per-player overlays for barriers, light blocks, structure voids, and bubble columns.
+- Per-player overlays for barriers, light blocks, structure voids, bubble columns, moving pistons, cave air, and void air.
 - Packet-only `BlockDisplay`, `ItemDisplay`, and `TextDisplay` overlays through PacketEvents and EntityLib.
 - Command toggles replacing the original client keybinds.
 - Optional chest menu for common visibility toggles.
-- Helper commands for giving or placing technical mapmaking blocks when Paper can represent them safely.
+- Helper command for giving technical mapmaking blocks when Paper can represent them safely.
 
 ## Commands
 
-- `/visiblebarrier toggle [all|everything|barriers|lights|structurevoids|bubblecolumns|air] [on|off]`
-- `/visiblebarrier settings <sendfeedback|solidlights|visibleair> [on|off]`
+- `/visiblebarrier toggle [all|everything|barriers|lights|structurevoids|bubblecolumns|movingpistons|air] [on|off]`
 - `/visiblebarrier show`
 - `/visiblebarrier menu`
 - `/visiblebarrier reload`
-- `/visiblebarrier give <barrier|light|structure_void|bubble_column|moving_piston|air|cave_air|void_air|end_portal|end_gateway> [variant] [player]`
-- `/visiblebarrier place <barrier|light|structure_void|bubble_column|moving_piston|air|cave_air|void_air|end_portal|end_gateway> [variant]`
+- `/visiblebarrier give <barrier|light|structure_void|bubble_column|moving_piston|air|cave_air|void_air> [variant] [player]`
 
 Aliases: `/vb`, `/visiblebarriers`.
 
-## Settings
+## Display Options
 
-- `sendfeedback` stores the player preference for command feedback.
-- `visibleair` allows cave air and void air overlays when `everything` mode is enabled.
-- `solidlights` makes light block overlays include a small stained-glass block marker; when disabled, lights render as icon and label overlays only.
+- `labels` toggles packet-only text labels that show block names above overlays.
+- `visibleair` allows `cave_air` and `void_air` overlays when `everything` mode is enabled. These render as full-block white stained glass markers so empty mapmaking spaces are easier to locate.
+- `movingpistons` controls moving piston overlays. These render as full-block lime stained glass markers.
 
 ## Permissions
 
 - `visiblebarrier.use` - use overlays and base commands
-- `visiblebarrier.settings` - change personal settings
 - `visiblebarrier.menu` - open the chest GUI
-- `visiblebarrier.give` - give/place technical mapmaking blocks
+- `visiblebarrier.give` - give technical mapmaking blocks
 - `visiblebarrier.reload` - reload plugin configuration
 
 ## Paper Port Notes

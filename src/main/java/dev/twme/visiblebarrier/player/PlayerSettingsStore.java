@@ -47,9 +47,9 @@ public final class PlayerSettingsStore {
         data.set(path + ".lights", playerSettings.isLights());
         data.set(path + ".structure-voids", playerSettings.isStructureVoids());
         data.set(path + ".bubble-columns", playerSettings.isBubbleColumns());
+        data.set(path + ".moving-pistons", playerSettings.isMovingPistons());
         data.set(path + ".visible-air", playerSettings.isVisibleAir());
-        data.set(path + ".send-feedback", playerSettings.isSendFeedback());
-        data.set(path + ".solid-lights", playerSettings.isSolidLights());
+        data.set(path + ".labels", playerSettings.isLabels());
         saveFile();
     }
 
@@ -76,9 +76,9 @@ public final class PlayerSettingsStore {
         playerSettings.setLights(section.getBoolean("lights", playerSettings.isLights()));
         playerSettings.setStructureVoids(section.getBoolean("structure-voids", playerSettings.isStructureVoids()));
         playerSettings.setBubbleColumns(section.getBoolean("bubble-columns", playerSettings.isBubbleColumns()));
+        playerSettings.setMovingPistons(section.getBoolean("moving-pistons", playerSettings.isMovingPistons()));
         playerSettings.setVisibleAir(section.getBoolean("visible-air", playerSettings.isVisibleAir()));
-        playerSettings.setSendFeedback(section.getBoolean("send-feedback", playerSettings.isSendFeedback()));
-        playerSettings.setSolidLights(section.getBoolean("solid-lights", playerSettings.isSolidLights()));
+        playerSettings.setLabels(section.getBoolean("labels", playerSettings.isLabels()));
         return playerSettings;
     }
 

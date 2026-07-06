@@ -59,62 +59,45 @@ public final class BlockScanner {
         boolean everything = settings.isEverything();
 
         if (material == Material.BARRIER && (everything || settings.isBarriers())) {
-            return target(block, Material.BARRIER, null, Material.RED_STAINED_GLASS, "Barrier", true, true, false, 0xFF5555);
+            return target(block, Material.BARRIER, null, Material.RED_STAINED_GLASS, "Barrier", true, settings.isLabels(), true);
         }
         if (material == Material.LIGHT && (everything || settings.isLights())) {
             String label = "Light";
-            if (block.getBlockData() instanceof Levelled levelled) {
+            if (pluginSettings.showLightLevels() && block.getBlockData() instanceof Levelled levelled) {
                 label = "Light " + levelled.getLevel();
             }
-            return target(block, Material.LIGHT, block.getBlockData(), Material.YELLOW_STAINED_GLASS, label, settings.isSolidLights(), pluginSettings.showLightLevels(), true, 0xFFFF55);
+            return target(block, Material.LIGHT, block.getBlockData(), Material.YELLOW_STAINED_GLASS, label, true, settings.isLabels(), true);
         }
         if (material == Material.STRUCTURE_VOID && (everything || settings.isStructureVoids())) {
-            return target(block, Material.STRUCTURE_VOID, null, Material.PURPLE_STAINED_GLASS, "Structure Void", true, true, false, 0xAA55FF);
+            return target(block, Material.STRUCTURE_VOID, null, Material.PURPLE_STAINED_GLASS, "Structure Void", true, settings.isLabels(), false);
         }
         if (material == Material.BUBBLE_COLUMN && (everything || settings.isBubbleColumns())) {
             String label = "Bubble Column";
             if (block.getBlockData() instanceof BubbleColumn bubbleColumn) {
                 label = bubbleColumn.isDrag() ? "Bubble Down" : "Bubble Up";
             }
-            return target(block, Material.WATER_BUCKET, Material.CYAN_STAINED_GLASS, label, 0x55FFFF);
+            return target(block, Material.WATER_BUCKET, Material.CYAN_STAINED_GLASS, label, settings.isLabels());
         }
         if (everything && settings.isVisibleAir() && (material == Material.CAVE_AIR || material == Material.VOID_AIR)) {
-            return target(block, Material.FEATHER, Material.WHITE_STAINED_GLASS, material == Material.CAVE_AIR ? "Cave Air" : "Void Air", 0xFFFFFF);
+            return target(block, Material.FEATHER, null, Material.WHITE_STAINED_GLASS, material == Material.CAVE_AIR ? "cave_air" : "void_air", true, settings.isLabels(), true);
         }
-        if (everything && (material == Material.END_PORTAL || material == Material.END_GATEWAY || material == Material.MOVING_PISTON)) {
-            return target(block, iconForTechnical(material), Material.LIME_STAINED_GLASS, labelForTechnical(material), 0x55FF55);
+        if (material == Material.MOVING_PISTON && (everything || settings.isMovingPistons())) {
+            return target(block, Material.PISTON, null, Material.LIME_STAINED_GLASS, "Moving Piston", true, settings.isLabels(), true);
         }
         return null;
     }
 
-    private OverlayTarget target(Block block, Material iconMaterial, Material markerMaterial, String label, int glowColor) {
-        return target(block, iconMaterial, null, markerMaterial, label, true, true, true, glowColor);
+    private OverlayTarget target(Block block, Material iconMaterial, Material markerMaterial, String label, boolean showLabel) {
+        return target(block, iconMaterial, null, markerMaterial, label, true, showLabel, false);
     }
 
-    private OverlayTarget target(Block block, Material iconMaterial, BlockData iconBlockData, Material markerMaterial, String label, boolean showMarker, boolean showLabel, boolean glowingMarker, int glowColor) {
+    private OverlayTarget target(Block block, Material iconMaterial, BlockData iconBlockData, Material markerMaterial, String label, boolean showMarker, boolean showLabel, boolean fullSizeMarker) {
         BlockData markerBlockData = markerMaterial.createBlockData();
-        return new OverlayTarget(BlockKey.of(block), block.getLocation(), safeIcon(iconMaterial), iconBlockData, markerBlockData, label, showMarker, showLabel, glowingMarker, glowColor);
+        return new OverlayTarget(BlockKey.of(block), block.getLocation(), safeIcon(iconMaterial), iconBlockData, markerBlockData, label, showMarker, showLabel, fullSizeMarker);
     }
 
     private Material safeIcon(Material material) {
         return material.isItem() ? material : Material.PAPER;
     }
 
-    private Material iconForTechnical(Material material) {
-        return switch (material) {
-            case END_PORTAL -> Material.ENDER_EYE;
-            case END_GATEWAY -> Material.END_CRYSTAL;
-            case MOVING_PISTON -> Material.PISTON;
-            default -> Material.PAPER;
-        };
-    }
-
-    private String labelForTechnical(Material material) {
-        return switch (material) {
-            case END_PORTAL -> "End Portal";
-            case END_GATEWAY -> "End Gateway";
-            case MOVING_PISTON -> "Moving Piston";
-            default -> material.name();
-        };
-    }
 }

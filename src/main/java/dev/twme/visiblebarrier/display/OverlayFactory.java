@@ -48,22 +48,21 @@ public final class OverlayFactory {
         entity.spawn(SpigotConversionUtil.fromBukkitLocation(target.blockLocation()));
         if (entity.getEntityMeta() instanceof BlockDisplayMeta meta) {
             meta.setBlockState(SpigotConversionUtil.fromBukkitBlockData(target.markerBlockData()));
-            if (target.glowingMarker()) {
-                meta.setTranslation(new Vector3f(0.36f, 0.36f, 0.36f));
-                meta.setScale(new Vector3f(0.28f, 0.28f, 0.28f));
-            } else {
+            if (target.fullSizeMarker()) {
                 meta.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
                 meta.setScale(new Vector3f(1.0f, 1.0f, 1.0f));
+            } else {
+                meta.setTranslation(new Vector3f(0.36f, 0.36f, 0.36f));
+                meta.setScale(new Vector3f(0.28f, 0.28f, 0.28f));
             }
-            applyDisplayDefaults(meta, target.glowColor());
+            applyDisplayDefaults(meta);
         }
-        entity.getEntityMeta().setGlowing(target.glowingMarker());
         entity.addViewer(viewerId);
         return entity;
     }
 
     private WrapperEntity createItemIcon(OverlayTarget target, java.util.UUID viewerId) {
-        Location location = target.blockLocation().clone().add(0.5D, 0.72D, 0.5D);
+        Location location = target.blockLocation().clone().add(0.5D, 0.5D, 0.5D);
         WrapperEntity entity = new WrapperEntity(EntityTypes.ITEM_DISPLAY);
         entity.spawn(SpigotConversionUtil.fromBukkitLocation(location));
         if (entity.getEntityMeta() instanceof ItemDisplayMeta meta) {
@@ -72,7 +71,7 @@ public final class OverlayFactory {
             meta.setDisplayType(ItemDisplayMeta.DisplayType.FIXED);
             meta.setBillboardConstraints(AbstractDisplayMeta.BillboardConstraints.CENTER);
             meta.setScale(new Vector3f(pluginSettings.iconScale(), pluginSettings.iconScale(), pluginSettings.iconScale()));
-            applyDisplayDefaults(meta, target.glowColor());
+            applyDisplayDefaults(meta);
         }
         entity.addViewer(viewerId);
         return entity;
@@ -98,17 +97,16 @@ public final class OverlayFactory {
             meta.setSeeThrough(true);
             meta.setShadow(true);
             meta.setBackgroundColor(0xA0000000);
-            applyDisplayDefaults(meta, target.glowColor());
+            applyDisplayDefaults(meta);
         }
         entity.addViewer(viewerId);
         return entity;
     }
 
-    private void applyDisplayDefaults(AbstractDisplayMeta meta, int glowColor) {
+    private void applyDisplayDefaults(AbstractDisplayMeta meta) {
         meta.setViewRange(pluginSettings.viewRange());
         meta.setBrightnessOverride(FULL_BRIGHT);
         meta.setShadowRadius(0.0f);
         meta.setShadowStrength(0.0f);
-        meta.setGlowColorOverride(glowColor);
     }
 }

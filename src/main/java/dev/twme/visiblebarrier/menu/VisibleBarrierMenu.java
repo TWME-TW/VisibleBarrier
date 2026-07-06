@@ -1,6 +1,6 @@
 package dev.twme.visiblebarrier.menu;
 
-import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,7 +28,9 @@ public final class VisibleBarrierMenu implements Listener {
     private final JavaPlugin plugin;
     private final OverlayManager overlayManager;
     private final PlayerSettingsStore playerSettingsStore;
-    private final Map<UUID, Inventory> openMenus = new ConcurrentHashMap<>();
+    private final Set<UUID> openMenuPlayers = ConcurrentHashMap.newKeySet();
+    private final Set<UUID> reopeningPlayers = ConcurrentHashMap.newKeySet();
+    private final java.util.Map<UUID, Inventory> openMenus = new ConcurrentHashMap<>();
 
     public VisibleBarrierMenu(JavaPlugin plugin, OverlayManager overlayManager, PlayerSettingsStore playerSettingsStore) {
         this.plugin = plugin;
@@ -37,18 +39,24 @@ public final class VisibleBarrierMenu implements Listener {
     }
 
     public void open(Player player) {
+        UUID playerId = player.getUniqueId();
         Inventory inventory = Bukkit.createInventory(player, 27, TITLE);
         PlayerSettings settings = playerSettingsStore.get(player);
-        inventory.setItem(10, toggleItem(Material.LEVER, "Enabled", settings.isEnabled()));
-        inventory.setItem(11, toggleItem(Material.STRUCTURE_BLOCK, "Everything", settings.isEverything()));
-        inventory.setItem(12, toggleItem(Material.BARRIER, "Barriers", settings.isBarriers()));
-        inventory.setItem(13, toggleItem(Material.LIGHT, "Lights", settings.isLights()));
-        inventory.setItem(14, toggleItem(Material.STRUCTURE_VOID, "Structure Voids", settings.isStructureVoids()));
-        inventory.setItem(15, toggleItem(Material.WATER_BUCKET, "Bubble Columns", settings.isBubbleColumns()));
-        inventory.setItem(16, toggleItem(Material.FEATHER, "Visible Air", settings.isVisibleAir()));
-        inventory.setItem(22, item(Material.REDSTONE, "Refresh"));
-        openMenus.put(player.getUniqueId(), inventory);
-        player.openInventory(inventory);
+        inventory.setItem(10, toggleItem(Material.BARRIER, "Barriers", settings.isBarriers()));
+        inventory.setItem(11, toggleItem(Material.LIGHT, "Lights", settings.isLights()));
+        inventory.setItem(12, toggleItem(Material.STRUCTURE_VOID, "Structure Voids", settings.isStructureVoids()));
+        inventory.setItem(13, toggleItem(Material.WATER_BUCKET, "Bubble Columns", settings.isBubbleColumns()));
+        inventory.setItem(14, toggleItem(Material.PISTON, "Moving Pistons", settings.isMovingPistons()));
+        inventory.setItem(15, toggleItem(Material.FEATHER, "Cave/Void Air", settings.isVisibleAir()));
+        inventory.setItem(16, toggleItem(Material.NAME_TAG, "Labels", settings.isLabels()));
+        openMenus.put(playerId, inventory);
+        openMenuPlayers.add(playerId);
+        reopeningPlayers.add(playerId);
+        try {
+            player.openInventory(inventory);
+        } finally {
+            reopeningPlayers.remove(playerId);
+        }
     }
 
     @EventHandler
@@ -56,21 +64,33 @@ public final class VisibleBarrierMenu implements Listener {
         if (!(event.getWhoClicked() instanceof Player player)) {
             return;
         }
-        Inventory inventory = openMenus.get(player.getUniqueId());
-        if (inventory == null || !event.getInventory().equals(inventory)) {
+        UUID playerId = player.getUniqueId();
+        if (!openMenuPlayers.contains(playerId)) {
             return;
         }
+        Inventory inventory = openMenus.get(playerId);
+        if (inventory == null || event.getView().getTopInventory() != inventory) {
+            return;
+        }
+
         event.setCancelled(true);
+        if (event.getRawSlot() >= inventory.getSize()) {
+            return;
+        }
+
         PlayerSettings settings = playerSettingsStore.get(player);
+        boolean recreateOverlays = false;
         switch (event.getRawSlot()) {
-            case 10 -> settings.setEnabled(!settings.isEnabled());
-            case 11 -> settings.setEverything(!settings.isEverything());
-            case 12 -> settings.setBarriers(!settings.isBarriers());
-            case 13 -> settings.setLights(!settings.isLights());
-            case 14 -> settings.setStructureVoids(!settings.isStructureVoids());
-            case 15 -> settings.setBubbleColumns(!settings.isBubbleColumns());
-            case 16 -> settings.setVisibleAir(!settings.isVisibleAir());
-            case 22 -> overlayManager.scheduleRefresh(player);
+            case 10 -> settings.setBarriers(!settings.isBarriers());
+            case 11 -> settings.setLights(!settings.isLights());
+            case 12 -> settings.setStructureVoids(!settings.isStructureVoids());
+            case 13 -> settings.setBubbleColumns(!settings.isBubbleColumns());
+            case 14 -> settings.setMovingPistons(!settings.isMovingPistons());
+            case 15 -> settings.setVisibleAir(!settings.isVisibleAir());
+            case 16 -> {
+                settings.setLabels(!settings.isLabels());
+                recreateOverlays = true;
+            }
             default -> {
                 return;
             }
@@ -79,6 +99,9 @@ public final class VisibleBarrierMenu implements Listener {
         if (!settings.isEnabled()) {
             overlayManager.clear(player.getUniqueId());
         } else {
+            if (recreateOverlays) {
+                overlayManager.clear(player.getUniqueId());
+            }
             overlayManager.scheduleRefresh(player);
         }
         FoliaScheduler.getEntityScheduler().run(player, plugin, task -> open(player), null);
@@ -86,13 +109,16 @@ public final class VisibleBarrierMenu implements Listener {
 
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
-        openMenus.remove(event.getPlayer().getUniqueId());
+        UUID playerId = event.getPlayer().getUniqueId();
+        if (reopeningPlayers.contains(playerId)) {
+            return;
+        }
+        openMenuPlayers.remove(playerId);
+        openMenus.remove(playerId);
     }
 
     private ItemStack toggleItem(Material material, String name, boolean enabled) {
-        ItemStack itemStack = item(material, name + ": " + (enabled ? "Enabled" : "Disabled"));
-        itemStack.setAmount(enabled ? 1 : 2);
-        return itemStack;
+        return item(material, name + ": " + (enabled ? "Enabled" : "Disabled"));
     }
 
     private ItemStack item(Material material, String name) {

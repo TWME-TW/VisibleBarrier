@@ -36,10 +36,10 @@ public final class PluginSettings {
                 plugin.getConfig().getBoolean("defaults.barriers", true),
                 plugin.getConfig().getBoolean("defaults.lights", true),
                 plugin.getConfig().getBoolean("defaults.structure-voids", true),
-                plugin.getConfig().getBoolean("defaults.bubble-columns", true),
+                plugin.getConfig().getBoolean("defaults.bubble-columns", false),
+                plugin.getConfig().getBoolean("defaults.moving-pistons", true),
                 plugin.getConfig().getBoolean("defaults.visible-air", false),
-                plugin.getConfig().getBoolean("defaults.send-feedback", true),
-                plugin.getConfig().getBoolean("defaults.solid-lights", false));
+                plugin.getConfig().getBoolean("defaults.labels", false));
     }
 
     public int scanRadius() {
@@ -83,7 +83,7 @@ public final class PluginSettings {
     }
 
     public record Defaults(boolean enabled, boolean everything, boolean barriers, boolean lights,
-                           boolean structureVoids, boolean bubbleColumns, boolean visibleAir,
-                           boolean sendFeedback, boolean solidLights) {
+                           boolean structureVoids, boolean bubbleColumns, boolean movingPistons, boolean visibleAir,
+                           boolean labels) {
     }
 }

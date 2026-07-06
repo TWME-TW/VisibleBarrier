@@ -9,9 +9,9 @@ public final class PlayerSettings {
     private boolean lights;
     private boolean structureVoids;
     private boolean bubbleColumns;
+    private boolean movingPistons;
     private boolean visibleAir;
-    private boolean sendFeedback;
-    private boolean solidLights;
+    private boolean labels;
 
     public PlayerSettings(PluginSettings.Defaults defaults) {
         this.enabled = defaults.enabled();
@@ -20,9 +20,9 @@ public final class PlayerSettings {
         this.lights = defaults.lights();
         this.structureVoids = defaults.structureVoids();
         this.bubbleColumns = defaults.bubbleColumns();
+        this.movingPistons = defaults.movingPistons();
         this.visibleAir = defaults.visibleAir();
-        this.sendFeedback = defaults.sendFeedback();
-        this.solidLights = defaults.solidLights();
+        this.labels = defaults.labels();
     }
 
     public boolean isEnabled() {
@@ -73,6 +73,14 @@ public final class PlayerSettings {
         this.bubbleColumns = bubbleColumns;
     }
 
+    public boolean isMovingPistons() {
+        return movingPistons;
+    }
+
+    public void setMovingPistons(boolean movingPistons) {
+        this.movingPistons = movingPistons;
+    }
+
     public boolean isVisibleAir() {
         return visibleAir;
     }
@@ -81,19 +89,11 @@ public final class PlayerSettings {
         this.visibleAir = visibleAir;
     }
 
-    public boolean isSendFeedback() {
-        return sendFeedback;
+    public boolean isLabels() {
+        return labels;
     }
 
-    public void setSendFeedback(boolean sendFeedback) {
-        this.sendFeedback = sendFeedback;
-    }
-
-    public boolean isSolidLights() {
-        return solidLights;
-    }
-
-    public void setSolidLights(boolean solidLights) {
-        this.solidLights = solidLights;
+    public void setLabels(boolean labels) {
+        this.labels = labels;
     }
 }
