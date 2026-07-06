@@ -1,6 +1,6 @@
 # VisibleBarrier
 
-VisibleBarrier is a PaperMC plugin for visualizing technical and invisible mapmaking blocks with packet-only display entities. Overlays are only sent to players who enable them, and no real display entities are spawned in the world.
+VisibleBarrier helps players easily see and manage hidden technical blocks like barriers, light blocks, structure voids, moving pistons, and special air blocks.
 
 ## Requirements
 
@@ -9,10 +9,10 @@ VisibleBarrier is a PaperMC plugin for visualizing technical and invisible mapma
 
 ## Features
 
-- Per-player overlays for barriers, light blocks, structure voids, bubble columns, moving pistons, cave air, and void air.
-- Packet-only `BlockDisplay`, `ItemDisplay`, and `TextDisplay` overlays through PacketEvents and EntityLib.
-- Command toggles and a chest menu for per-player visibility control.
-- Exact light block levels are shown through the light item display.
+- Shows clear visual markers for barriers, light blocks, structure voids, bubble columns, moving pistons, cave air, and void air.
+- Lets each player choose which hidden blocks they want to see.
+- Includes simple commands and a chest menu for quick control.
+- Shows the correct light level for light blocks.
 
 ## Commands
 
@@ -25,9 +25,9 @@ Alias: `/vb`.
 
 ## Display Options
 
-- `labels` toggles packet-only text labels that show block names above overlays.
-- `visibleair` controls `cave_air` and `void_air` overlays. These render as full-block white stained glass markers so empty mapmaking spaces are easier to locate.
-- `movingpistons` controls moving piston overlays. These render as full-block lime stained glass markers.
+- `labels` shows block names above markers.
+- `visibleair` shows `cave_air` and `void_air` with full-block white stained glass markers.
+- `movingpistons` shows moving pistons with full-block lime stained glass markers.
 
 ## Menu
 
@@ -41,7 +41,7 @@ Alias: `/vb`.
 - `Cave/Void Air`
 - `Labels`
 
-Every menu item has a stack size of 1. The item name shows whether that option is enabled or disabled.
+Each menu item shows whether that option is enabled or disabled.
 
 ## Defaults
 
