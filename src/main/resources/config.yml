@@ -6,7 +6,6 @@ scan:
 
 defaults:
   enabled: false
-  everything: false
   barriers: true
   lights: true
   structure-voids: true

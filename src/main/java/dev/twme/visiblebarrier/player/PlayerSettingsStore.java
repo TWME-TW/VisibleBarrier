@@ -42,7 +42,6 @@ public final class PlayerSettingsStore {
         }
         String path = playerId.toString();
         data.set(path + ".enabled", playerSettings.isEnabled());
-        data.set(path + ".everything", playerSettings.isEverything());
         data.set(path + ".barriers", playerSettings.isBarriers());
         data.set(path + ".lights", playerSettings.isLights());
         data.set(path + ".structure-voids", playerSettings.isStructureVoids());
@@ -71,7 +70,6 @@ public final class PlayerSettingsStore {
             return playerSettings;
         }
         playerSettings.setEnabled(section.getBoolean("enabled", playerSettings.isEnabled()));
-        playerSettings.setEverything(section.getBoolean("everything", playerSettings.isEverything()));
         playerSettings.setBarriers(section.getBoolean("barriers", playerSettings.isBarriers()));
         playerSettings.setLights(section.getBoolean("lights", playerSettings.isLights()));
         playerSettings.setStructureVoids(section.getBoolean("structure-voids", playerSettings.isStructureVoids()));

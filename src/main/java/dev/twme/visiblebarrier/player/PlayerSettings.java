@@ -4,7 +4,6 @@ import dev.twme.visiblebarrier.config.PluginSettings;
 
 public final class PlayerSettings {
     private boolean enabled;
-    private boolean everything;
     private boolean barriers;
     private boolean lights;
     private boolean structureVoids;
@@ -15,7 +14,6 @@ public final class PlayerSettings {
 
     public PlayerSettings(PluginSettings.Defaults defaults) {
         this.enabled = defaults.enabled();
-        this.everything = defaults.everything();
         this.barriers = defaults.barriers();
         this.lights = defaults.lights();
         this.structureVoids = defaults.structureVoids();
@@ -31,14 +29,6 @@ public final class PlayerSettings {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public boolean isEverything() {
-        return everything;
-    }
-
-    public void setEverything(boolean everything) {
-        this.everything = everything;
     }
 
     public boolean isBarriers() {

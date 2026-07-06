@@ -56,32 +56,31 @@ public final class BlockScanner {
 
     private OverlayTarget classify(Block block, PlayerSettings settings) {
         Material material = block.getType();
-        boolean everything = settings.isEverything();
 
-        if (material == Material.BARRIER && (everything || settings.isBarriers())) {
+        if (material == Material.BARRIER && settings.isBarriers()) {
             return target(block, Material.BARRIER, null, Material.RED_STAINED_GLASS, "Barrier", true, settings.isLabels(), true);
         }
-        if (material == Material.LIGHT && (everything || settings.isLights())) {
+        if (material == Material.LIGHT && settings.isLights()) {
             String label = "Light";
             if (pluginSettings.showLightLevels() && block.getBlockData() instanceof Levelled levelled) {
                 label = "Light " + levelled.getLevel();
             }
             return target(block, Material.LIGHT, block.getBlockData(), Material.YELLOW_STAINED_GLASS, label, true, settings.isLabels(), true);
         }
-        if (material == Material.STRUCTURE_VOID && (everything || settings.isStructureVoids())) {
+        if (material == Material.STRUCTURE_VOID && settings.isStructureVoids()) {
             return target(block, Material.STRUCTURE_VOID, null, Material.PURPLE_STAINED_GLASS, "Structure Void", true, settings.isLabels(), false);
         }
-        if (material == Material.BUBBLE_COLUMN && (everything || settings.isBubbleColumns())) {
+        if (material == Material.BUBBLE_COLUMN && settings.isBubbleColumns()) {
             String label = "Bubble Column";
             if (block.getBlockData() instanceof BubbleColumn bubbleColumn) {
                 label = bubbleColumn.isDrag() ? "Bubble Down" : "Bubble Up";
             }
             return target(block, Material.WATER_BUCKET, Material.CYAN_STAINED_GLASS, label, settings.isLabels());
         }
-        if (everything && settings.isVisibleAir() && (material == Material.CAVE_AIR || material == Material.VOID_AIR)) {
+        if (settings.isVisibleAir() && (material == Material.CAVE_AIR || material == Material.VOID_AIR)) {
             return target(block, Material.FEATHER, null, Material.WHITE_STAINED_GLASS, material == Material.CAVE_AIR ? "cave_air" : "void_air", true, settings.isLabels(), true);
         }
-        if (material == Material.MOVING_PISTON && (everything || settings.isMovingPistons())) {
+        if (material == Material.MOVING_PISTON && settings.isMovingPistons()) {
             return target(block, Material.PISTON, null, Material.LIME_STAINED_GLASS, "Moving Piston", true, settings.isLabels(), true);
         }
         return null;

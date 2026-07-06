@@ -20,7 +20,7 @@ import dev.twme.visiblebarrier.player.PlayerSettingsStore;
 
 public final class VisibleBarrierCommand implements TabExecutor {
     private static final List<String> ROOT = List.of("toggle", "show", "reload", "menu");
-    private static final List<String> TOGGLES = List.of("all", "everything", "barriers", "lights", "structurevoids", "bubblecolumns", "movingpistons", "air");
+    private static final List<String> TOGGLES = List.of("all", "barriers", "lights", "structurevoids", "bubblecolumns", "movingpistons", "air");
     private static final List<String> BOOLEAN = List.of("on", "off", "true", "false");
 
     private final VisibleBarrierPlugin plugin;
@@ -79,7 +79,6 @@ public final class VisibleBarrierCommand implements TabExecutor {
 
         boolean value = switch (target) {
             case "all" -> explicit != null ? explicit : !settings.isEnabled();
-            case "everything" -> explicit != null ? explicit : !settings.isEverything();
             case "barriers" -> explicit != null ? explicit : !settings.isBarriers();
             case "lights" -> explicit != null ? explicit : !settings.isLights();
             case "structurevoids", "structure_voids" -> explicit != null ? explicit : !settings.isStructureVoids();
@@ -94,7 +93,6 @@ public final class VisibleBarrierCommand implements TabExecutor {
 
         switch (target) {
             case "all" -> settings.setEnabled(value);
-            case "everything" -> settings.setEverything(value);
             case "barriers" -> settings.setBarriers(value);
             case "lights" -> settings.setLights(value);
             case "structurevoids", "structure_voids" -> settings.setStructureVoids(value);
@@ -120,7 +118,7 @@ public final class VisibleBarrierCommand implements TabExecutor {
         if (player == null) return;
         PlayerSettings settings = playerSettingsStore.get(player);
         send(player, "§6VisibleBarrier status");
-        send(player, "§7Enabled: " + format(settings.isEnabled()) + " §7Everything: " + format(settings.isEverything()));
+        send(player, "§7Enabled: " + format(settings.isEnabled()));
         send(player, "§7Barriers: " + format(settings.isBarriers()) + " §7Lights: " + format(settings.isLights()) + " §7Structure Voids: " + format(settings.isStructureVoids()));
         send(player, "§7Bubble Columns: " + format(settings.isBubbleColumns()) + " §7Moving Pistons: " + format(settings.isMovingPistons()));
         send(player, "§7cave_air/void_air: " + format(settings.isVisibleAir()));
@@ -153,7 +151,6 @@ public final class VisibleBarrierCommand implements TabExecutor {
     private void sendHelp(CommandSender sender, String label) {
         send(sender, "§6VisibleBarrier");
         send(sender, "§7/" + label + " toggle [all|barriers|lights|structurevoids|bubblecolumns|movingpistons|air] [on|off]");
-        send(sender, "§8  air controls cave_air and void_air overlays; these require everything mode.");
         send(sender, "§7/" + label + " show");
         send(sender, "§7/" + label + " menu");
     }

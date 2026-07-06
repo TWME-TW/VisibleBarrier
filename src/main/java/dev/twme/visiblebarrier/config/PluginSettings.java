@@ -32,7 +32,6 @@ public final class PluginSettings {
         this.showLightLevels = plugin.getConfig().getBoolean("display.show-light-levels", true);
         this.defaults = new Defaults(
                 plugin.getConfig().getBoolean("defaults.enabled", false),
-                plugin.getConfig().getBoolean("defaults.everything", false),
                 plugin.getConfig().getBoolean("defaults.barriers", true),
                 plugin.getConfig().getBoolean("defaults.lights", true),
                 plugin.getConfig().getBoolean("defaults.structure-voids", true),
@@ -82,7 +81,7 @@ public final class PluginSettings {
         return defaults;
     }
 
-    public record Defaults(boolean enabled, boolean everything, boolean barriers, boolean lights,
+    public record Defaults(boolean enabled, boolean barriers, boolean lights,
                            boolean structureVoids, boolean bubbleColumns, boolean movingPistons, boolean visibleAir,
                            boolean labels) {
     }
