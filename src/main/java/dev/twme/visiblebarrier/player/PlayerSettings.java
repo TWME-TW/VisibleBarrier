@@ -3,14 +3,14 @@ package dev.twme.visiblebarrier.player;
 import dev.twme.visiblebarrier.config.PluginSettings;
 
 public final class PlayerSettings {
-    private boolean enabled;
-    private boolean barriers;
-    private boolean lights;
-    private boolean structureVoids;
-    private boolean bubbleColumns;
-    private boolean movingPistons;
-    private boolean visibleAir;
-    private boolean labels;
+    private volatile boolean enabled;
+    private volatile boolean barriers;
+    private volatile boolean lights;
+    private volatile boolean structureVoids;
+    private volatile boolean bubbleColumns;
+    private volatile boolean movingPistons;
+    private volatile boolean visibleAir;
+    private volatile boolean labels;
 
     public PlayerSettings(PluginSettings.Defaults defaults) {
         this.enabled = defaults.enabled();

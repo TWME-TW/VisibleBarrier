@@ -17,10 +17,10 @@ commands:
 permissions:
   visiblebarrier.use:
     description: Allow using VisibleBarrier commands and overlays
-    default: true
+    default: op
   visiblebarrier.menu:
     description: Allow opening the VisibleBarrier menu
-    default: true
+    default: op
   visiblebarrier.reload:
     description: Allow reloading VisibleBarrier configuration
     default: op

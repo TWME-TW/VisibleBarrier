@@ -61,6 +61,8 @@ New players start with overlays disabled globally. When enabled, the default vis
 - `visiblebarrier.menu` - open the chest GUI
 - `visiblebarrier.reload` - reload plugin configuration
 
+Overlay and menu permissions default to server operators. Grant them with a permissions plugin if regular players should use VisibleBarrier.
+
 ## License
 
 VisibleBarrier is licensed under the MIT License. See [LICENSE](LICENSE).

@@ -12,12 +12,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import dev.twme.visiblebarrier.config.PluginSettings;
+import io.github.retrooper.packetevents.util.folia.FoliaScheduler;
 
 public final class PlayerSettingsStore {
     private final JavaPlugin plugin;
     private final PluginSettings pluginSettings;
     private final File file;
+    private final Object dataLock = new Object();
     private final Map<UUID, PlayerSettings> settings = new ConcurrentHashMap<>();
+    private final java.util.Set<UUID> pendingSaves = ConcurrentHashMap.newKeySet();
     private YamlConfiguration data;
 
     public PlayerSettingsStore(JavaPlugin plugin, PluginSettings pluginSettings) {
@@ -36,20 +39,38 @@ public final class PlayerSettingsStore {
     }
 
     public void save(UUID playerId) {
+        pendingSaves.remove(playerId);
+        saveNow(playerId);
+    }
+
+    public void saveDebounced(UUID playerId) {
+        if (!pendingSaves.add(playerId)) {
+            return;
+        }
+        FoliaScheduler.getGlobalRegionScheduler().runDelayed(plugin, task -> {
+            if (pendingSaves.remove(playerId)) {
+                saveNow(playerId);
+            }
+        }, 20L);
+    }
+
+    private void saveNow(UUID playerId) {
         PlayerSettings playerSettings = settings.get(playerId);
         if (playerSettings == null) {
             return;
         }
         String path = playerId.toString();
-        data.set(path + ".enabled", playerSettings.isEnabled());
-        data.set(path + ".barriers", playerSettings.isBarriers());
-        data.set(path + ".lights", playerSettings.isLights());
-        data.set(path + ".structure-voids", playerSettings.isStructureVoids());
-        data.set(path + ".bubble-columns", playerSettings.isBubbleColumns());
-        data.set(path + ".moving-pistons", playerSettings.isMovingPistons());
-        data.set(path + ".visible-air", playerSettings.isVisibleAir());
-        data.set(path + ".labels", playerSettings.isLabels());
-        saveFile();
+        synchronized (dataLock) {
+            data.set(path + ".enabled", playerSettings.isEnabled());
+            data.set(path + ".barriers", playerSettings.isBarriers());
+            data.set(path + ".lights", playerSettings.isLights());
+            data.set(path + ".structure-voids", playerSettings.isStructureVoids());
+            data.set(path + ".bubble-columns", playerSettings.isBubbleColumns());
+            data.set(path + ".moving-pistons", playerSettings.isMovingPistons());
+            data.set(path + ".visible-air", playerSettings.isVisibleAir());
+            data.set(path + ".labels", playerSettings.isLabels());
+            saveFileLocked();
+        }
     }
 
     public void saveAll() {
@@ -59,28 +80,33 @@ public final class PlayerSettingsStore {
     }
 
     public void reload() {
-        this.data = YamlConfiguration.loadConfiguration(file);
+        synchronized (dataLock) {
+            this.data = YamlConfiguration.loadConfiguration(file);
+        }
+        this.pendingSaves.clear();
         this.settings.clear();
     }
 
     private PlayerSettings load(UUID playerId) {
         PlayerSettings playerSettings = new PlayerSettings(pluginSettings.defaults());
-        ConfigurationSection section = data.getConfigurationSection(playerId.toString());
-        if (section == null) {
-            return playerSettings;
+        synchronized (dataLock) {
+            ConfigurationSection section = data.getConfigurationSection(playerId.toString());
+            if (section == null) {
+                return playerSettings;
+            }
+            playerSettings.setEnabled(section.getBoolean("enabled", playerSettings.isEnabled()));
+            playerSettings.setBarriers(section.getBoolean("barriers", playerSettings.isBarriers()));
+            playerSettings.setLights(section.getBoolean("lights", playerSettings.isLights()));
+            playerSettings.setStructureVoids(section.getBoolean("structure-voids", playerSettings.isStructureVoids()));
+            playerSettings.setBubbleColumns(section.getBoolean("bubble-columns", playerSettings.isBubbleColumns()));
+            playerSettings.setMovingPistons(section.getBoolean("moving-pistons", playerSettings.isMovingPistons()));
+            playerSettings.setVisibleAir(section.getBoolean("visible-air", playerSettings.isVisibleAir()));
+            playerSettings.setLabels(section.getBoolean("labels", playerSettings.isLabels()));
         }
-        playerSettings.setEnabled(section.getBoolean("enabled", playerSettings.isEnabled()));
-        playerSettings.setBarriers(section.getBoolean("barriers", playerSettings.isBarriers()));
-        playerSettings.setLights(section.getBoolean("lights", playerSettings.isLights()));
-        playerSettings.setStructureVoids(section.getBoolean("structure-voids", playerSettings.isStructureVoids()));
-        playerSettings.setBubbleColumns(section.getBoolean("bubble-columns", playerSettings.isBubbleColumns()));
-        playerSettings.setMovingPistons(section.getBoolean("moving-pistons", playerSettings.isMovingPistons()));
-        playerSettings.setVisibleAir(section.getBoolean("visible-air", playerSettings.isVisibleAir()));
-        playerSettings.setLabels(section.getBoolean("labels", playerSettings.isLabels()));
         return playerSettings;
     }
 
-    private void saveFile() {
+    private void saveFileLocked() {
         try {
             data.save(file);
         } catch (IOException exception) {

@@ -21,13 +21,13 @@ public final class PluginSettings {
 
     public void reload() {
         plugin.reloadConfig();
-        this.scanRadius = Math.max(1, plugin.getConfig().getInt("scan.radius", 16));
-        this.verticalRadius = Math.max(1, plugin.getConfig().getInt("scan.vertical-radius", 8));
-        this.intervalTicks = Math.max(5L, plugin.getConfig().getLong("scan.interval-ticks", 20L));
-        this.maxOverlaysPerPlayer = Math.max(16, plugin.getConfig().getInt("scan.max-overlays-per-player", 512));
-        this.viewRange = (float) plugin.getConfig().getDouble("display.view-range", 48.0D);
-        this.iconScale = (float) plugin.getConfig().getDouble("display.icon-scale", 0.55D);
-        this.labelScale = (float) plugin.getConfig().getDouble("display.label-scale", 0.8D);
+        this.scanRadius = clamp(plugin.getConfig().getInt("scan.radius", 16), 1, 32);
+        this.verticalRadius = clamp(plugin.getConfig().getInt("scan.vertical-radius", 8), 1, 32);
+        this.intervalTicks = clamp(plugin.getConfig().getLong("scan.interval-ticks", 20L), 5L, 1200L);
+        this.maxOverlaysPerPlayer = clamp(plugin.getConfig().getInt("scan.max-overlays-per-player", 512), 16, 2048);
+        this.viewRange = clamp((float) plugin.getConfig().getDouble("display.view-range", 48.0D), 1.0f, 128.0f);
+        this.iconScale = clamp((float) plugin.getConfig().getDouble("display.icon-scale", 0.55D), 0.1f, 4.0f);
+        this.labelScale = clamp((float) plugin.getConfig().getDouble("display.label-scale", 0.8D), 0.1f, 4.0f);
         this.showLabels = plugin.getConfig().getBoolean("display.show-labels", true);
         this.showLightLevels = plugin.getConfig().getBoolean("display.show-light-levels", true);
         this.defaults = new Defaults(
@@ -79,6 +79,18 @@ public final class PluginSettings {
 
     public Defaults defaults() {
         return defaults;
+    }
+
+    private static int clamp(int value, int minimum, int maximum) {
+        return Math.max(minimum, Math.min(maximum, value));
+    }
+
+    private static long clamp(long value, long minimum, long maximum) {
+        return Math.max(minimum, Math.min(maximum, value));
+    }
+
+    private static float clamp(float value, float minimum, float maximum) {
+        return Math.max(minimum, Math.min(maximum, value));
     }
 
     public record Defaults(boolean enabled, boolean barriers, boolean lights,

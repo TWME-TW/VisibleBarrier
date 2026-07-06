@@ -104,7 +104,7 @@ public final class VisibleBarrierCommand implements TabExecutor {
             }
         }
 
-        playerSettingsStore.save(player.getUniqueId());
+        playerSettingsStore.saveDebounced(player.getUniqueId());
         if (!settings.isEnabled()) {
             overlayManager.clear(player.getUniqueId());
         } else {
@@ -116,6 +116,10 @@ public final class VisibleBarrierCommand implements TabExecutor {
     private void handleShow(CommandSender sender) {
         Player player = requirePlayer(sender);
         if (player == null) return;
+        if (!player.hasPermission("visiblebarrier.use")) {
+            send(player, "§cYou do not have permission to use VisibleBarrier.");
+            return;
+        }
         PlayerSettings settings = playerSettingsStore.get(player);
         send(player, "§6VisibleBarrier status");
         send(player, "§7Enabled: " + format(settings.isEnabled()));

@@ -17,12 +17,15 @@ import io.github.retrooper.packetevents.util.folia.FoliaScheduler;
 import io.github.retrooper.packetevents.util.folia.TaskWrapper;
 
 public final class OverlayManager {
+    private static final long REFRESH_DEBOUNCE_TICKS = 5L;
+
     private final JavaPlugin plugin;
     private final PluginSettings pluginSettings;
     private final PlayerSettingsStore playerSettingsStore;
     private final BlockScanner blockScanner;
     private final OverlayFactory overlayFactory;
     private final Map<UUID, Map<BlockKey, OverlayEntry>> overlays = new ConcurrentHashMap<>();
+    private final Set<UUID> pendingRefreshes = ConcurrentHashMap.newKeySet();
     private TaskWrapper refreshTask;
 
     public OverlayManager(JavaPlugin plugin, PluginSettings pluginSettings, PlayerSettingsStore playerSettingsStore) {
@@ -63,7 +66,14 @@ public final class OverlayManager {
     }
 
     public void scheduleRefresh(Player player) {
-        FoliaScheduler.getEntityScheduler().execute(player, plugin, () -> refreshPlayer(player), null, 1L);
+        UUID playerId = player.getUniqueId();
+        if (!pendingRefreshes.add(playerId)) {
+            return;
+        }
+        FoliaScheduler.getEntityScheduler().execute(player, plugin, () -> {
+            pendingRefreshes.remove(playerId);
+            refreshPlayer(player);
+        }, () -> pendingRefreshes.remove(playerId), REFRESH_DEBOUNCE_TICKS);
     }
 
     public void refreshPlayer(Player player) {
@@ -90,6 +100,7 @@ public final class OverlayManager {
     }
 
     public void clear(UUID playerId) {
+        pendingRefreshes.remove(playerId);
         Map<BlockKey, OverlayEntry> playerOverlays = overlays.remove(playerId);
         if (playerOverlays == null) {
             return;
@@ -99,6 +110,7 @@ public final class OverlayManager {
     }
 
     public void clearAll() {
+        pendingRefreshes.clear();
         Set<UUID> playerIds = Set.copyOf(overlays.keySet());
         for (UUID playerId : playerIds) {
             clear(playerId);

@@ -74,6 +74,10 @@ public final class VisibleBarrierMenu implements Listener {
         }
 
         event.setCancelled(true);
+        if (!player.hasPermission("visiblebarrier.menu")) {
+            player.closeInventory();
+            return;
+        }
         if (event.getRawSlot() >= inventory.getSize()) {
             return;
         }
@@ -95,7 +99,7 @@ public final class VisibleBarrierMenu implements Listener {
                 return;
             }
         }
-        playerSettingsStore.save(player.getUniqueId());
+        playerSettingsStore.saveDebounced(player.getUniqueId());
         if (!settings.isEnabled()) {
             overlayManager.clear(player.getUniqueId());
         } else {
