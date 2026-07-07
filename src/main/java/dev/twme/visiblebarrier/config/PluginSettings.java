@@ -5,6 +5,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class PluginSettings {
     private final JavaPlugin plugin;
     private int scanRadius;
+    private int minimumScanRadius;
+    private int maximumScanRadius;
     private int verticalRadius;
     private long intervalTicks;
     private int maxOverlaysPerPlayer;
@@ -21,7 +23,10 @@ public final class PluginSettings {
 
     public void reload() {
         plugin.reloadConfig();
-        this.scanRadius = clamp(plugin.getConfig().getInt("scan.radius", 16), 1, 32);
+        int configuredMaximum = clamp(plugin.getConfig().getInt("scan.max-radius", 32), 1, 32);
+        this.minimumScanRadius = clamp(plugin.getConfig().getInt("scan.min-radius", 1), 1, configuredMaximum);
+        this.maximumScanRadius = configuredMaximum;
+        this.scanRadius = clamp(plugin.getConfig().getInt("scan.radius", 16), minimumScanRadius, maximumScanRadius);
         this.verticalRadius = clamp(plugin.getConfig().getInt("scan.vertical-radius", 8), 1, 32);
         this.intervalTicks = clamp(plugin.getConfig().getLong("scan.interval-ticks", 20L), 5L, 1200L);
         this.maxOverlaysPerPlayer = clamp(plugin.getConfig().getInt("scan.max-overlays-per-player", 512), 16, 2048);
@@ -43,6 +48,18 @@ public final class PluginSettings {
 
     public int scanRadius() {
         return scanRadius;
+    }
+
+    public int minimumScanRadius() {
+        return minimumScanRadius;
+    }
+
+    public int maximumScanRadius() {
+        return maximumScanRadius;
+    }
+
+    public int clampScanRadius(int radius) {
+        return clamp(radius, minimumScanRadius, maximumScanRadius);
     }
 
     public int verticalRadius() {

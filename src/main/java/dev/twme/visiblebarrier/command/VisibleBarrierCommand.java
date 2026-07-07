@@ -19,7 +19,7 @@ import dev.twme.visiblebarrier.player.PlayerSettings;
 import dev.twme.visiblebarrier.player.PlayerSettingsStore;
 
 public final class VisibleBarrierCommand implements TabExecutor {
-    private static final List<String> ROOT = List.of("toggle", "show", "reload", "menu");
+    private static final List<String> ROOT = List.of("toggle", "distance", "show", "reload", "menu");
     private static final List<String> TOGGLES = List.of("all", "barriers", "lights", "structurevoids", "bubblecolumns", "movingpistons", "air");
     private static final List<String> BOOLEAN = List.of("on", "off", "true", "false");
 
@@ -45,6 +45,7 @@ public final class VisibleBarrierCommand implements TabExecutor {
         String subCommand = args[0].toLowerCase(Locale.ROOT);
         switch (subCommand) {
             case "toggle" -> handleToggle(sender, args);
+            case "distance" -> handleDistance(sender, args);
             case "show" -> handleShow(sender);
             case "reload" -> handleReload(sender);
             case "menu" -> handleMenu(sender);
@@ -62,6 +63,9 @@ public final class VisibleBarrierCommand implements TabExecutor {
         if ("toggle".equals(subCommand)) {
             if (args.length == 2) return filter(TOGGLES, args[1]);
             if (args.length == 3) return filter(BOOLEAN, args[2]);
+        }
+        if ("distance".equals(subCommand) && args.length == 2) {
+            return filter(distanceSuggestions(), args[1]);
         }
         return List.of();
     }
@@ -113,6 +117,39 @@ public final class VisibleBarrierCommand implements TabExecutor {
         send(player, "§7VisibleBarrier " + target + " is now " + (value ? "§aenabled" : "§cdisabled") + "§7.");
     }
 
+    private void handleDistance(CommandSender sender, String[] args) {
+        Player player = requirePlayer(sender);
+        if (player == null) return;
+        if (!player.hasPermission("visiblebarrier.use")) {
+            send(player, "§cYou do not have permission to use VisibleBarrier.");
+            return;
+        }
+
+        PlayerSettings settings = playerSettingsStore.get(player);
+        if (args.length < 2) {
+            send(player, "§7VisibleBarrier distance: §f" + settings.displayRadius() + " §8(" + plugin.getPluginSettings().minimumScanRadius() + "-" + plugin.getPluginSettings().maximumScanRadius() + ")");
+            return;
+        }
+
+        Integer radius = parseInteger(args[1]);
+        if (radius == null) {
+            send(player, "§cDistance must be a number.");
+            return;
+        }
+        if (radius < plugin.getPluginSettings().minimumScanRadius() || radius > plugin.getPluginSettings().maximumScanRadius()) {
+            send(player, "§cDistance must be between " + plugin.getPluginSettings().minimumScanRadius() + " and " + plugin.getPluginSettings().maximumScanRadius() + ".");
+            return;
+        }
+
+        settings.setDisplayRadius(radius);
+        playerSettingsStore.saveDebounced(player.getUniqueId());
+        overlayManager.clear(player.getUniqueId());
+        if (settings.isEnabled()) {
+            overlayManager.scheduleRefresh(player);
+        }
+        send(player, "§7VisibleBarrier distance is now §f" + radius + "§7 blocks.");
+    }
+
     private void handleShow(CommandSender sender) {
         Player player = requirePlayer(sender);
         if (player == null) return;
@@ -127,7 +164,7 @@ public final class VisibleBarrierCommand implements TabExecutor {
         send(player, "§7Bubble Columns: " + format(settings.isBubbleColumns()) + " §7Moving Pistons: " + format(settings.isMovingPistons()));
         send(player, "§7cave_air/void_air: " + format(settings.isVisibleAir()));
         send(player, "§7Labels: " + format(settings.isLabels()));
-        send(player, "§7Scan radius: §f" + plugin.getPluginSettings().scanRadius() + " §7Vertical: §f" + plugin.getPluginSettings().verticalRadius());
+        send(player, "§7Distance: §f" + settings.displayRadius() + " §8(" + plugin.getPluginSettings().minimumScanRadius() + "-" + plugin.getPluginSettings().maximumScanRadius() + ") §7Vertical: §f" + plugin.getPluginSettings().verticalRadius());
     }
 
     private void handleReload(CommandSender sender) {
@@ -155,6 +192,7 @@ public final class VisibleBarrierCommand implements TabExecutor {
     private void sendHelp(CommandSender sender, String label) {
         send(sender, "§6VisibleBarrier");
         send(sender, "§7/" + label + " toggle [all|barriers|lights|structurevoids|bubblecolumns|movingpistons|air] [on|off]");
+        send(sender, "§7/" + label + " distance [blocks]");
         send(sender, "§7/" + label + " show");
         send(sender, "§7/" + label + " menu");
     }
@@ -175,6 +213,14 @@ public final class VisibleBarrierCommand implements TabExecutor {
         };
     }
 
+    private Integer parseInteger(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException exception) {
+            return null;
+        }
+    }
+
     private String format(boolean value) {
         return value ? "§aon" : "§coff";
     }
@@ -192,6 +238,13 @@ public final class VisibleBarrierCommand implements TabExecutor {
             }
         }
         return matches;
+    }
+
+    private List<String> distanceSuggestions() {
+        return List.of(
+                String.valueOf(plugin.getPluginSettings().minimumScanRadius()),
+                String.valueOf(plugin.getPluginSettings().scanRadius()),
+                String.valueOf(plugin.getPluginSettings().maximumScanRadius()));
     }
 
 }

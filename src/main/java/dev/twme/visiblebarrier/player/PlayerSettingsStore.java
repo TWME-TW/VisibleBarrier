@@ -69,6 +69,7 @@ public final class PlayerSettingsStore {
             data.set(path + ".moving-pistons", playerSettings.isMovingPistons());
             data.set(path + ".visible-air", playerSettings.isVisibleAir());
             data.set(path + ".labels", playerSettings.isLabels());
+            data.set(path + ".display-radius", playerSettings.displayRadius());
             saveFileLocked();
         }
     }
@@ -88,7 +89,7 @@ public final class PlayerSettingsStore {
     }
 
     private PlayerSettings load(UUID playerId) {
-        PlayerSettings playerSettings = new PlayerSettings(pluginSettings.defaults());
+        PlayerSettings playerSettings = new PlayerSettings(pluginSettings);
         synchronized (dataLock) {
             ConfigurationSection section = data.getConfigurationSection(playerId.toString());
             if (section == null) {
@@ -102,6 +103,7 @@ public final class PlayerSettingsStore {
             playerSettings.setMovingPistons(section.getBoolean("moving-pistons", playerSettings.isMovingPistons()));
             playerSettings.setVisibleAir(section.getBoolean("visible-air", playerSettings.isVisibleAir()));
             playerSettings.setLabels(section.getBoolean("labels", playerSettings.isLabels()));
+            playerSettings.setDisplayRadius(pluginSettings.clampScanRadius(section.getInt("display-radius", playerSettings.displayRadius())));
         }
         return playerSettings;
     }

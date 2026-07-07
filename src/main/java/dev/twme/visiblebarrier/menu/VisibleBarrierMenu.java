@@ -17,6 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import dev.twme.visiblebarrier.display.OverlayManager;
+import dev.twme.visiblebarrier.config.PluginSettings;
 import dev.twme.visiblebarrier.player.PlayerSettings;
 import dev.twme.visiblebarrier.player.PlayerSettingsStore;
 import io.github.retrooper.packetevents.util.folia.FoliaScheduler;
@@ -28,6 +29,7 @@ public final class VisibleBarrierMenu implements Listener {
     private final JavaPlugin plugin;
     private final OverlayManager overlayManager;
     private final PlayerSettingsStore playerSettingsStore;
+    private final PluginSettings pluginSettings;
     private final Set<UUID> openMenuPlayers = ConcurrentHashMap.newKeySet();
     private final Set<UUID> reopeningPlayers = ConcurrentHashMap.newKeySet();
     private final java.util.Map<UUID, Inventory> openMenus = new ConcurrentHashMap<>();
@@ -36,6 +38,7 @@ public final class VisibleBarrierMenu implements Listener {
         this.plugin = plugin;
         this.overlayManager = overlayManager;
         this.playerSettingsStore = playerSettingsStore;
+        this.pluginSettings = ((dev.twme.visiblebarrier.VisibleBarrierPlugin) plugin).getPluginSettings();
     }
 
     public void open(Player player) {
@@ -49,6 +52,10 @@ public final class VisibleBarrierMenu implements Listener {
         inventory.setItem(14, toggleItem(Material.PISTON, "Moving Pistons", settings.isMovingPistons()));
         inventory.setItem(15, toggleItem(Material.FEATHER, "Cave/Void Air", settings.isVisibleAir()));
         inventory.setItem(16, toggleItem(Material.NAME_TAG, "Labels", settings.isLabels()));
+        inventory.setItem(20, item(Material.REDSTONE_TORCH, "Distance -1"));
+        inventory.setItem(22, item(Material.SPYGLASS, "Distance: " + settings.displayRadius()));
+        inventory.setItem(24, item(Material.TORCH, "Distance +1"));
+        inventory.setItem(26, item(Material.COMPASS, "Reset Distance"));
         openMenus.put(playerId, inventory);
         openMenuPlayers.add(playerId);
         reopeningPlayers.add(playerId);
@@ -93,6 +100,21 @@ public final class VisibleBarrierMenu implements Listener {
             case 15 -> settings.setVisibleAir(!settings.isVisibleAir());
             case 16 -> {
                 settings.setLabels(!settings.isLabels());
+                recreateOverlays = true;
+            }
+            case 20 -> {
+                settings.setDisplayRadius(pluginSettings.clampScanRadius(settings.displayRadius() - 1));
+                recreateOverlays = true;
+            }
+            case 22 -> {
+                return;
+            }
+            case 24 -> {
+                settings.setDisplayRadius(pluginSettings.clampScanRadius(settings.displayRadius() + 1));
+                recreateOverlays = true;
+            }
+            case 26 -> {
+                settings.setDisplayRadius(pluginSettings.scanRadius());
                 recreateOverlays = true;
             }
             default -> {

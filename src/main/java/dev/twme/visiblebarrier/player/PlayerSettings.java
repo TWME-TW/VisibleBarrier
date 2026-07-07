@@ -11,16 +11,19 @@ public final class PlayerSettings {
     private volatile boolean movingPistons;
     private volatile boolean visibleAir;
     private volatile boolean labels;
+    private volatile int displayRadius;
 
-    public PlayerSettings(PluginSettings.Defaults defaults) {
-        this.enabled = defaults.enabled();
-        this.barriers = defaults.barriers();
-        this.lights = defaults.lights();
-        this.structureVoids = defaults.structureVoids();
-        this.bubbleColumns = defaults.bubbleColumns();
-        this.movingPistons = defaults.movingPistons();
-        this.visibleAir = defaults.visibleAir();
-        this.labels = defaults.labels();
+    public PlayerSettings(PluginSettings defaults) {
+        PluginSettings.Defaults playerDefaults = defaults.defaults();
+        this.displayRadius = defaults.scanRadius();
+        this.enabled = playerDefaults.enabled();
+        this.barriers = playerDefaults.barriers();
+        this.lights = playerDefaults.lights();
+        this.structureVoids = playerDefaults.structureVoids();
+        this.bubbleColumns = playerDefaults.bubbleColumns();
+        this.movingPistons = playerDefaults.movingPistons();
+        this.visibleAir = playerDefaults.visibleAir();
+        this.labels = playerDefaults.labels();
     }
 
     public boolean isEnabled() {
@@ -85,5 +88,13 @@ public final class PlayerSettings {
 
     public void setLabels(boolean labels) {
         this.labels = labels;
+    }
+
+    public int displayRadius() {
+        return displayRadius;
+    }
+
+    public void setDisplayRadius(int displayRadius) {
+        this.displayRadius = displayRadius;
     }
 }

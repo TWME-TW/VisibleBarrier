@@ -59,7 +59,9 @@ public final class OverlayManager {
 
     public void refreshNearby(Location location) {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
-            if (player.getWorld().equals(location.getWorld()) && player.getLocation().distanceSquared(location) <= Math.pow(pluginSettings.scanRadius() + 2.0D, 2.0D)) {
+            PlayerSettings settings = playerSettingsStore.get(player);
+            double radius = pluginSettings.clampScanRadius(settings.displayRadius()) + 2.0D;
+            if (player.getWorld().equals(location.getWorld()) && player.getLocation().distanceSquared(location) <= radius * radius) {
                 scheduleRefresh(player);
             }
         }

@@ -11,12 +11,14 @@ VisibleBarrier helps players easily see and manage hidden technical blocks like 
 
 - Shows clear visual markers for barriers, light blocks, structure voids, bubble columns, moving pistons, cave air, and void air.
 - Lets each player choose which hidden blocks they want to see.
+- Lets each player adjust how far away hidden blocks are shown.
 - Includes simple commands and a chest menu for quick control.
 - Shows the correct light level for light blocks.
 
 ## Commands
 
 - `/visiblebarrier toggle [all|barriers|lights|structurevoids|bubblecolumns|movingpistons|air] [on|off]`
+- `/visiblebarrier distance [blocks]`
 - `/visiblebarrier show`
 - `/visiblebarrier menu`
 - `/visiblebarrier reload`
@@ -26,6 +28,7 @@ Alias: `/vb`.
 ## Display Options
 
 - `labels` shows block names above markers.
+- `distance` controls how far away hidden blocks are shown for each player.
 - `visibleair` shows `cave_air` and `void_air` with full-block white stained glass markers.
 - `movingpistons` shows moving pistons with full-block lime stained glass markers.
 
@@ -40,6 +43,10 @@ Alias: `/vb`.
 - `Moving Pistons`
 - `Cave/Void Air`
 - `Labels`
+- `Distance -1`
+- `Distance`
+- `Distance +1`
+- `Reset Distance`
 
 Each menu item shows whether that option is enabled or disabled.
 
@@ -54,6 +61,9 @@ New players start with overlays disabled globally. When enabled, the default vis
 - Bubble columns: off
 - Cave/Void Air: off
 - Labels: off
+- Distance: 16 blocks
+
+Servers can set the allowed distance range in `config.yml`.
 
 ## Permissions
 

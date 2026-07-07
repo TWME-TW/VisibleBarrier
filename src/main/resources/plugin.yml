@@ -10,7 +10,7 @@ depend:
 commands:
   visiblebarrier:
     description: Toggle packet-only overlays for invisible mapmaking blocks
-    usage: /visiblebarrier <toggle|show|reload|menu>
+    usage: /visiblebarrier <toggle|distance|show|reload|menu>
     aliases: [vb]
     permission: visiblebarrier.use
 

@@ -1,5 +1,7 @@
 scan:
   radius: 16
+  min-radius: 1
+  max-radius: 32
   vertical-radius: 8
   interval-ticks: 20
   max-overlays-per-player: 512

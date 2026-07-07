@@ -33,7 +33,7 @@ public final class BlockScanner {
         int centerX = center.getBlockX();
         int centerY = center.getBlockY();
         int centerZ = center.getBlockZ();
-        int radius = pluginSettings.scanRadius();
+        int radius = pluginSettings.clampScanRadius(playerSettings.displayRadius());
         int verticalRadius = pluginSettings.verticalRadius();
 
         for (int y = Math.max(world.getMinHeight(), centerY - verticalRadius); y <= Math.min(world.getMaxHeight() - 1, centerY + verticalRadius); y++) {
