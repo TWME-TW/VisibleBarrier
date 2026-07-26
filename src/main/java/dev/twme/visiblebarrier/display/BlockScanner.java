@@ -1,7 +1,9 @@
 package dev.twme.visiblebarrier.display;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,6 +19,7 @@ import dev.twme.visiblebarrier.player.PlayerSettings;
 
 public final class BlockScanner {
     private final PluginSettings pluginSettings;
+    private final Map<ScanRange, List<CenteredScanOrder.Offset>> scanOrders = new ConcurrentHashMap<>();
 
     public BlockScanner(PluginSettings pluginSettings) {
         this.pluginSettings = pluginSettings;
@@ -35,19 +38,28 @@ public final class BlockScanner {
         int centerZ = center.getBlockZ();
         int radius = pluginSettings.clampScanRadius(playerSettings.displayRadius());
         int verticalRadius = pluginSettings.verticalRadius();
+        int minimumY = world.getMinHeight();
+        int maximumY = world.getMaxHeight() - 1;
+        int maximumTargets = pluginSettings.maxOverlaysPerPlayer();
+        ScanRange scanRange = new ScanRange(radius, verticalRadius);
+        List<CenteredScanOrder.Offset> scanOrder = scanOrders.computeIfAbsent(
+                scanRange,
+                range -> CenteredScanOrder.create(range.horizontalRadius(), range.verticalRadius()));
 
-        for (int y = Math.max(world.getMinHeight(), centerY - verticalRadius); y <= Math.min(world.getMaxHeight() - 1, centerY + verticalRadius); y++) {
-            for (int x = centerX - radius; x <= centerX + radius; x++) {
-                for (int z = centerZ - radius; z <= centerZ + radius; z++) {
-                    if (targets.size() >= pluginSettings.maxOverlaysPerPlayer()) {
-                        return targets;
-                    }
-                    Block block = world.getBlockAt(x, y, z);
-                    OverlayTarget target = classify(block, playerSettings);
-                    if (target != null) {
-                        targets.put(target.key(), target);
-                    }
-                }
+        for (CenteredScanOrder.Offset offset : scanOrder) {
+            if (targets.size() >= maximumTargets) {
+                return targets;
+            }
+
+            int y = centerY + offset.y();
+            if (y < minimumY || y > maximumY) {
+                continue;
+            }
+
+            Block block = world.getBlockAt(centerX + offset.x(), y, centerZ + offset.z());
+            OverlayTarget target = classify(block, playerSettings);
+            if (target != null) {
+                targets.put(target.key(), target);
             }
         }
 
@@ -97,6 +109,9 @@ public final class BlockScanner {
 
     private Material safeIcon(Material material) {
         return material.isItem() ? material : Material.PAPER;
+    }
+
+    private record ScanRange(int horizontalRadius, int verticalRadius) {
     }
 
 }
