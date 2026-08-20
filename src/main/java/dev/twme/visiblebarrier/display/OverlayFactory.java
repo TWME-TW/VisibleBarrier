@@ -49,8 +49,8 @@ public final class OverlayFactory {
         if (entity.getEntityMeta() instanceof BlockDisplayMeta meta) {
             meta.setBlockState(SpigotConversionUtil.fromBukkitBlockData(target.markerBlockData()));
             if (target.fullSizeMarker()) {
-                meta.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
-                meta.setScale(new Vector3f(1.0f, 1.0f, 1.0f));
+                meta.setTranslation(new Vector3f(-0.0005f, -0.0005f, -0.0005f));
+                meta.setScale(new Vector3f(1.001f, 1.001f, 1.001f));
             } else {
                 meta.setTranslation(new Vector3f(0.36f, 0.36f, 0.36f));
                 meta.setScale(new Vector3f(0.28f, 0.28f, 0.28f));
